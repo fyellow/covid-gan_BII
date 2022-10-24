@@ -1,4 +1,5 @@
 import torch
+
 import numpy as np
 import pandas as pd
 
@@ -7,8 +8,8 @@ import torch.nn.functional as F
 from torch.autograd import Variable
 #%matplotlib inline
 import matplotlib.pyplot as plt
-import seaborn as sns
-sns.set_context(context="talk")
+# import seaborn as sns
+# sns.set_context(context="talk")
 
 from tqdm import tqdm
 from IPython.display import clear_output
@@ -23,7 +24,6 @@ with warnings.catch_warnings():
 
 cuda = True if torch.cuda.is_available() else False
 Tensor = torch.cuda.FloatTensor if cuda else torch.FloatTensor
-
 def load_numpy(arr_dir):
     with open(arr_dir, 'rb') as f:
         data = np.load(f)
@@ -114,7 +114,7 @@ class Discriminator(nn.Module):
         return (x)
 
 
-model = AutoEncoder(protdim=2, locdim=2, aadim=2)
+model = AutoEncoder(protdim=2, locdim=2, aadim=2).cuda()
 model.load_state_dict(torch.load('embedding_model_with_zeros.pt'))
 
 
@@ -190,7 +190,7 @@ discriminator = Discriminator().cuda()
 optimizer_G = torch.optim.Adam(generator.parameters(), lr=1e-3)
 optimizer_D = torch.optim.Adam(discriminator.parameters(), lr=1e-3)
 
-n_epochs=0 +1
+n_epochs=3 +1
 batch_size= 500
 arr_d_loss, arr_g_loss, arr_i = [], [], []
 v_animate=1
@@ -206,8 +206,12 @@ training_data = data[:batch_size*n_batches].reshape((n_batches, batch_size, 1, 5
 # test_data = training_data[round(n_batches*0.8)+1:]
 # training_data = training_data[:round(n_batches*0.8)+1]
 
+import os
+clear = lambda: os.system('clear') #on Linux System
+
 
 for i, epoch in enumerate((range(n_epochs))):
+    print('epoch',epoch)
     try:
         g_epoch_loss, d_epoch_loss=0,0
         # Configure input
@@ -242,21 +246,21 @@ for i, epoch in enumerate((range(n_epochs))):
             arr_g_loss.append(g_loss.item())
             arr_d_loss.append(d_loss.item())
 
-            if j % v_animate == 0:
-                clear_output(wait=True)
-                print(f'epoch {epoch} \ngenerator loss {g_loss.item()}\ndiscriminator loss {d_loss.item()}')
-                plt.figure(figsize=(8,6))
-                plt.plot(np.arange(j+1)*(i+1)/n_batches, arr_g_loss, label='G')
-                plt.plot(np.arange(j+1)*(i+1)/n_batches, arr_d_loss, label='D')
-                plt.title(f'Current epoch:{epoch+1}, batch:{j}/{n_batches}')
-                plt.ylabel('losses')
-                plt.xlabel('epoch')
-                plt.ylim(bottom=0)
-                plt.legend()
-                plt.show()
+            # if j % v_animate == 0:
+            #     clear() # clear_output(wait=True)
+            #     print(f'epoch {epoch} \ngenerator loss {g_loss.item()}\ndiscriminator loss {d_loss.item()}')
+            #     plt.figure(figsize=(8,6))
+            #     plt.plot(np.arange(j+1)*(i+1)/n_batches, arr_g_loss, label='G')
+            #     plt.plot(np.arange(j+1)*(i+1)/n_batches, arr_d_loss, label='D')
+            #     plt.title(f'Current epoch:{epoch+1}, batch:{j}/{n_batches}')
+            #     plt.ylabel('losses')
+            #     plt.xlabel('epoch')
+            #     plt.ylim(bottom=0)
+            #     plt.legend()
+            #     plt.show()
             # if j == 70:
             #     break
     except KeyboardInterrupt:
-        pass
+        print('stop')
 
 

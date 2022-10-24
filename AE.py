@@ -41,6 +41,7 @@ class BasicDecoding(nn.Module):
         super(BasicDecoding, self).__init__()
         self.indim = indim
         self.outdim = outdim
+        self.fc1 = nn.Linear(self.indim, self.indim)
         self.fc2 = nn.Linear(self.indim, 1)
         self.rl = nn.LeakyReLU()
         self.sm = nn.Softmax(dim=0)
