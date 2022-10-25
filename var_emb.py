@@ -75,8 +75,8 @@ discriminator = Discriminator().cuda()
 optimizer_G = torch.optim.Adam(generator.parameters(), lr=1e-3)
 optimizer_D = torch.optim.Adam(discriminator.parameters(), lr=1e-3)
 
-n_epochs = 3 + 1
-batch_size = 500
+n_epochs = 3
+batch_size = 100
 arr_d_loss, arr_g_loss, arr_i = [], [], []
 v_animate = 1
 
@@ -90,7 +90,7 @@ training_data = data[:batch_size * n_batches].reshape((n_batches, batch_size, 1,
 
 
 for i, epoch in enumerate((range(n_epochs))):
-    print('epoch', epoch)
+    print('epoch', epoch+1)
     try:
         g_epoch_loss, d_epoch_loss = 0, 0
         # Configure input
@@ -125,19 +125,19 @@ for i, epoch in enumerate((range(n_epochs))):
             arr_g_loss.append(g_loss.item())
             arr_d_loss.append(d_loss.item())
 
+
         if i % v_animate == 0:
-            clear() # clear_output(wait=True)
+            #clear() # clear_output(wait=True)
             print(f'epoch {epoch} \ngenerator loss {g_loss.item()}\ndiscriminator loss {d_loss.item()}')
             plt.figure(figsize=(8,6))
-            plt.plot(np.arange(j+1)*(i+1)/n_batches, arr_g_loss, label='G')
-            plt.plot(np.arange(j+1)*(i+1)/n_batches, arr_d_loss, label='D')
+            plt.plot(np.arange(len(arr_g_loss))/n_batches, arr_g_loss, label='G')
+            plt.plot(np.arange(len(arr_g_loss))/n_batches, arr_d_loss, label='D')
             plt.title(f'Current epoch:{epoch+1}, batch:{j}/{n_batches}')
             plt.ylabel('losses')
             plt.xlabel('epoch')
             plt.ylim(bottom=0)
             plt.legend()
             plt.show()
-        if j == 70:
-            break
+
     except KeyboardInterrupt:
         print('stop')
