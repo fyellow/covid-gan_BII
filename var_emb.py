@@ -75,8 +75,8 @@ discriminator = Discriminator().cuda()
 optimizer_G = torch.optim.Adam(generator.parameters(), lr=1e-3)
 optimizer_D = torch.optim.Adam(discriminator.parameters(), lr=1e-3)
 
-n_epochs = 3
-batch_size = 100
+n_epochs = 50
+batch_size = 1000
 arr_d_loss, arr_g_loss, arr_i = [], [], []
 v_animate = 1
 
@@ -90,12 +90,12 @@ training_data = data[:batch_size * n_batches].reshape((n_batches, batch_size, 1,
 
 
 for i, epoch in enumerate((range(n_epochs))):
-    print('epoch', epoch+1)
+    print(f'epoch: {epoch+1} / {n_epochs}:\n')
     try:
         g_epoch_loss, d_epoch_loss = 0, 0
         # Configure input
         for j, real_data_batch in enumerate(tqdm(training_data)):
-            fake_data_batch = generator(Tensor(noise_data(batch_size)).cuda())
+            fake_data_batch = generator(Tensor(noise_data(batch_size)))
 
             # ---------------------
             #  Train Discriminator
@@ -113,7 +113,7 @@ for i, epoch in enumerate((range(n_epochs))):
             #  Train Generator
             # -----------------
             for _ in range(3):
-                fake_data_batch = generator(Tensor(noise_data(batch_size)).cuda())
+                fake_data_batch = generator(Tensor(noise_data(batch_size)))
                 optimizer_G.zero_grad()
 
                 # Loss measures generator's ability to fool the discriminator
@@ -128,7 +128,7 @@ for i, epoch in enumerate((range(n_epochs))):
 
         if i % v_animate == 0:
             #clear() # clear_output(wait=True)
-            print(f'epoch {epoch} \ngenerator loss {g_loss.item()}\ndiscriminator loss {d_loss.item()}')
+            print(f'generator loss {g_loss.item()}\ndiscriminator loss {d_loss.item()}')
             plt.figure(figsize=(8,6))
             plt.plot(np.arange(len(arr_g_loss))/n_batches, arr_g_loss, label='G')
             plt.plot(np.arange(len(arr_g_loss))/n_batches, arr_d_loss, label='D')
