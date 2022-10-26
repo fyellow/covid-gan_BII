@@ -1,3 +1,3 @@
-import torch
-loss = torch.nn.BCELoss()(torch.tensor([1 / 2]), torch.tensor([1.]))
-print(loss.item())
+import pandas as pd
+data = pd.read_csv('id_date_muts.csv')
+print(data.head())

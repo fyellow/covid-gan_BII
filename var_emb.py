@@ -35,6 +35,8 @@ def save_numpy(arr, arr_dir):
     with open(arr_dir, 'wb') as f:
         np.save(f, arr)
 
+def save_gan(model, ):
+    pass
 
 model = AutoEncoder(protdim=2, locdim=2, aadim=2).cuda()
 model.load_state_dict(torch.load('embedding_model_with_zeros.pt'))
@@ -72,8 +74,8 @@ disc_loss = DiscFGANLoss(gamma_=gamma)
 generator = Generator().cuda()
 discriminator = Discriminator().cuda()
 
-optimizer_G = torch.optim.Adam(generator.parameters(), lr=1e-3)
-optimizer_D = torch.optim.Adam(discriminator.parameters(), lr=1e-3)
+optimizer_G = torch.optim.Adam(generator.parameters(), lr=8e-4)
+optimizer_D = torch.optim.Adam(discriminator.parameters(), lr=8e-4)
 
 n_epochs = 50
 batch_size = 1000
@@ -132,12 +134,24 @@ for i, epoch in enumerate((range(n_epochs))):
             plt.figure(figsize=(8,6))
             plt.plot(np.arange(len(arr_g_loss))/n_batches, arr_g_loss, label='G')
             plt.plot(np.arange(len(arr_g_loss))/n_batches, arr_d_loss, label='D')
-            plt.title(f'Current epoch:{epoch+1}, batch:{j}/{n_batches}')
+            plt.title(f'Current epoch:{epoch+1}, batch:{j}/{n_batches}\nalpha={alpha},beta={beta},gamma={gamma}')
             plt.ylabel('losses')
             plt.xlabel('epoch')
+            plt.plot([0,len(arr_g_loss)/n_batches],[0.693,0.693],color='r',ls='--')
+            plt.plot([0, len(arr_g_loss) / n_batches], [2,2], color='black', ls='--')
             plt.ylim(bottom=0)
             plt.legend()
             plt.show()
 
     except KeyboardInterrupt:
+
         print('stop')
+        torch.save(generator.state_dict(), 'gan_substs_gen.pt')
+        torch.save(discriminator.state_dict(), 'gan_substs_disc.pt')
+        exit()
+
+torch.save(generator.state_dict(), 'gan_substs_gen.pt')
+torch.save(discriminator.state_dict(), 'gan_substs_disc.pt')
+
+
+#if __name__ == '__main__':
