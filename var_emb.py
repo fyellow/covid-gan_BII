@@ -6,6 +6,8 @@ import pandas as pd
 import matplotlib.pyplot as plt
 
 from tqdm import tqdm
+import datetime
+now = datetime.datetime.now().strftime('%Y-%m-%d_%H:%M:%S')
 
 from utils.AE import AutoEncoder
 from utils.variant_GAN import Generator, Discriminator
@@ -77,7 +79,7 @@ discriminator = Discriminator().cuda()
 optimizer_G = torch.optim.Adam(generator.parameters(), lr=8e-4)
 optimizer_D = torch.optim.Adam(discriminator.parameters(), lr=8e-4)
 
-n_epochs = 50
+n_epochs = 10
 batch_size = 1000
 arr_d_loss, arr_g_loss, arr_i = [], [], []
 v_animate = 1
@@ -146,12 +148,10 @@ for i, epoch in enumerate((range(n_epochs))):
     except KeyboardInterrupt:
 
         print('stop')
-        torch.save(generator.state_dict(), 'gan_substs_gen.pt')
-        torch.save(discriminator.state_dict(), 'gan_substs_disc.pt')
         exit()
 
-torch.save(generator.state_dict(), 'gan_substs_gen.pt')
-torch.save(discriminator.state_dict(), 'gan_substs_disc.pt')
+torch.save(generator.state_dict(), f'models_saved/gan_substs_gen-{now}.pt')
+torch.save(discriminator.state_dict(), f'models_saved/gan_substs_disc-{now}.pt')
 
 
 #if __name__ == '__main__':
