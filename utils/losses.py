@@ -25,7 +25,7 @@ class DiscFGANLoss(nn.Module):
 
     def forward(self, d_out_real, d_out_fake):
         # calculate loss using the function defined in the paper
-        loss = torch.mean(-torch.log2(d_out_real) - self.gamma * torch.log2(torch.ones_like(d_out_fake) - d_out_fake))
+        loss = torch.mean(-torch.log(d_out_real) - self.gamma * torch.log(torch.ones_like(d_out_fake) - d_out_fake))
         return loss
 
 

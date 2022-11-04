@@ -63,10 +63,10 @@ arr = arr_whole[:idx]
 metadata = metadata[:idx]
 
 ###Generator Hyperparameters###
-alpha = 1
-beta = 0
+alpha = 0.5
+beta = 15
 ###Discriminator Hyperparameters###
-gamma = 1
+gamma = 0.1
 
 # Loss function
 gen_loss = GenFGANLoss(alpha_=alpha, beta_=beta)
@@ -76,10 +76,10 @@ disc_loss = DiscFGANLoss(gamma_=gamma)
 generator = Generator().cuda()
 discriminator = Discriminator().cuda()
 
-optimizer_G = torch.optim.Adam(generator.parameters(), lr=8e-4)
-optimizer_D = torch.optim.Adam(discriminator.parameters(), lr=8e-4)
+optimizer_G = torch.optim.Adam(generator.parameters(), lr=5e-4)
+optimizer_D = torch.optim.Adam(discriminator.parameters(), lr=1e-4)
 
-n_epochs = 10
+n_epochs = 100
 batch_size = 1000
 arr_d_loss, arr_g_loss, arr_i = [], [], []
 v_animate = 1
@@ -94,7 +94,7 @@ training_data = data[:batch_size * n_batches].reshape((n_batches, batch_size, 1,
 
 
 for i, epoch in enumerate((range(n_epochs))):
-    print(f'epoch: {epoch+1} / {n_epochs}:\n')
+    print(f'\nepoch: {epoch+1} / {n_epochs}:\n')
     try:
         g_epoch_loss, d_epoch_loss = 0, 0
         # Configure input
@@ -116,7 +116,7 @@ for i, epoch in enumerate((range(n_epochs))):
             # -----------------
             #  Train Generator
             # -----------------
-            for _ in range(3):
+            for _ in range(2):
                 fake_data_batch = generator(Tensor(noise_data(batch_size)))
                 optimizer_G.zero_grad()
 
@@ -140,7 +140,7 @@ for i, epoch in enumerate((range(n_epochs))):
             plt.ylabel('losses')
             plt.xlabel('epoch')
             plt.plot([0,len(arr_g_loss)/n_batches],[0.693,0.693],color='r',ls='--')
-            plt.plot([0, len(arr_g_loss) / n_batches], [2,2], color='black', ls='--')
+            # plt.plot([0, len(arr_g_loss) / n_batches], [2,2], color='black', ls='--')
             plt.ylim(bottom=0)
             plt.legend()
             plt.show()
@@ -150,8 +150,10 @@ for i, epoch in enumerate((range(n_epochs))):
         print('stop')
         exit()
 
-torch.save(generator.state_dict(), f'models_saved/gan_substs_gen-{now}.pt')
-torch.save(discriminator.state_dict(), f'models_saved/gan_substs_disc-{now}.pt')
+
+
+# torch.save(generator.state_dict(), f'models_saved/fgan_substs_gen-{now}-hyp={hyperparametrs}.pt')
+# torch.save(discriminator.state_dict(), f'models_saved/fgan_substs_disc-{now}-hyp={hyperparametrs}.pt')
 
 
 #if __name__ == '__main__':
