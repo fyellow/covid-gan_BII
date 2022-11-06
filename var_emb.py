@@ -28,12 +28,23 @@ Tensor = torch.cuda.FloatTensor if cuda else torch.FloatTensor
 
 
 def load_numpy(arr_dir):
-    with open(arr_dir, 'rb') as f:
+    """
+    Loads numpy array stored in .npy format
+    :param arr_dir: path to existing binary file
+    :return: numpy array
+    """
+    with open(arr_dir, 'rb') as  f:
         data = np.load(f)
     return data
 
 
 def save_numpy(arr, arr_dir):
+    """
+    Saves numpy array as a file in .npy format
+    :param arr: numpy array to save
+    :param arr_dir: desired path to saved binary file
+    :return: none
+    """
     with open(arr_dir, 'wb') as f:
         np.save(f, arr)
 
@@ -45,11 +56,24 @@ model.load_state_dict(torch.load('embedding_model_with_zeros.pt'))
 
 
 def noise_data(n):
+    """
+    Generate noise data for GAN (FGAN) model
+    :param n: number of samples to generate
+    :return: random samples from multidimensional normal distribution
+    """
     return np.random.normal(0, 8, [n, 256])
 
 
 def pre_decode(var, prot_dec, aa_dec):
-    var = var[arr[0].sum(axis=1) != 0]
+    """
+    Decodes variants stored as a matrix back to list of substitutions
+    Please note that original amino acid is ignored, only substitution is returned
+    :param var: variant as a matrix with encoded substitutions with zero padding to achieve uniform size
+    :param prot_dec: inverted protein label encoding dictionary
+    :param aa_dec: inverted amino acid label encoding dictionary
+    :return:
+    """
+    var = var[arr[0].sum(axis=1) != 0] # exclude zero padding rows
     res = []
     for row in var:
         res.append(prot_dec[row[0]] + '_' + str(int(row[1])) + aa_dec[row[2]])
