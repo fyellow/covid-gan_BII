@@ -5,12 +5,12 @@ import torch.nn as nn
 class Generator(nn.Module):
     def __init__(self):
         super(Generator, self).__init__()
-        self.latent_dim = 256
+        self.latent_dim = 256 #length of generator's latent space
 
-        self.fc_1 = nn.Linear(self.latent_dim, self.latent_dim * 2 * 2)
-        self.bn_fc = nn.BatchNorm2d(self.latent_dim)
+        self.fc_1 = nn.Linear(self.latent_dim, self.latent_dim * 2 * 2) 
+        self.bn_fc = nn.BatchNorm2d(self.latent_dim) 
 
-        self.convt_1 = nn.ConvTranspose2d(self.latent_dim, 128, (6, 2), stride=(1, 1))
+        self.convt_1 = nn.ConvTranspose2d(self.latent_dim, 128, (6, 2), stride=(1, 1)) 
         self.bn_1 = nn.BatchNorm2d(128)
 
         self.convt_2 = nn.ConvTranspose2d(128, 32, (6, 2), stride=(2, 1))
@@ -51,7 +51,7 @@ class Discriminator(nn.Module):
         super(Discriminator, self).__init__()
 
         self.fc_1 = nn.Linear(64 * 2 * 2, 1)
-        self.activation = nn.Sigmoid()
+        self.activation = nn.Sigmoid() #ask audrey why sigmoid--> maybe differntiable and invertable  
 
         self.convt_1 = nn.Conv2d(1, 16, (7, 2), stride=(1, 1))
         self.bn_1 = nn.BatchNorm2d(16)
@@ -63,7 +63,7 @@ class Discriminator(nn.Module):
         self.bn_3 = nn.BatchNorm2d(64)
 
         self.convt_4 = nn.Conv2d(64, 64, (6, 2), stride=(2, 1))
-        self.bn_4 = nn.BatchNorm2d(64)
+        self.bn_4 = nn.BatchNorm2d(64) #why 64? 
 
     def forward(self, x):
         x = self.convt_1(x)
