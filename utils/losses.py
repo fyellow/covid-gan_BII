@@ -29,7 +29,7 @@ class DiscFGANLoss(nn.Module):
         return loss
 
 
-class PretrainLoss(nn.Module):
+class PretrainLoss(nn.Module): #ask audery 
     def __init__(self, **kwargs):
         super().__init__()
 
