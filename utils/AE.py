@@ -8,11 +8,11 @@ class BasicEncoding(nn.Module):
     def __init__(self, ndim=5):
         super(BasicEncoding, self).__init__()
         self.ndim = ndim
-        self.fc1 = nn.Linear(1, self.ndim)
+        self.fc1 = nn.Linear(1, self.ndim)  
         self.fc2 = nn.Linear(self.ndim, self.ndim)
         self.activation = nn.LeakyReLU()
 
-    def forward(self, Input):
+    def forward(self, Input): #forward passing the data through layers
         x = self.activation(self.fc1(Input))
         x = self.activation(self.fc2(x))
         return x
