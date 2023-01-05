@@ -112,31 +112,32 @@ hyperparametrs = (alpha, beta, gamma) #alpha-- hyperparameter used to generate d
 #When gamma is less than 1, the discriminator will focus more on classifying the real data points correctly.
 
 data = model.encoder(Tensor(arr).reshape(-1, 3, 1)).reshape(-1, 1, 50, 6).detach() #reshaping the array--> for architecture 50(fixed vector value for number of submitutions, eg:8--->50-8=42 zeropadding), 6 is latent domain subsitution
+#(prot_dim = loc_dim = aa_dim = 2.)--->2+2+2=6  Protien is represented by vector of dim 2 
 n_batches = len(data) // batch_size
 training_data = data[:batch_size * n_batches].reshape((n_batches, batch_size, 1, 50, 6)).cuda()
 # test_data = training_data[round(n_batches*0.8)+1:]
 # training_data = training_data[:round(n_batches*0.8)+1]
 
 
-for i, epoch in enumerate((range(n_epochs))):
+for i, epoch in enumerate((range(n_epochs))): #search abt this
     print(f'\nepoch: {epoch+1} / {n_epochs}:\n')
     try:
-        g_epoch_loss, d_epoch_loss = 0, 0
+        g_epoch_loss, d_epoch_loss = 0, 0 
         # Configure input
         for j, real_data_batch in enumerate(tqdm(training_data)):
-            fake_data_batch = generator(Tensor(noise_data(batch_size)))
+            fake_data_batch = generator(Tensor(noise_data(batch_size))) #generating fake data
 
             # ---------------------
             #  Train Discriminator
             # ---------------------
 
-            optimizer_D.zero_grad()
+            optimizer_D.zero_grad() #search abt this
 
             # Measure discriminator's ability to classify real from generated samples
             d_loss = disc_loss(discriminator(real_data_batch), discriminator(fake_data_batch))
 
-            d_loss.backward()
-            optimizer_D.step()
+            d_loss.backward() #backprop
+            optimizer_D.step() #search abt this 
 
             # -----------------
             #  Train Generator
@@ -155,7 +156,7 @@ for i, epoch in enumerate((range(n_epochs))):
             arr_d_loss.append(d_loss.item())
 
 
-        if i % v_animate == 0:
+        if i % v_animate == 0: #for every v_animate , the graph will be updated --i.e every iteration 
             #clear() # clear_output(wait=True)
             print(f'generator loss {g_loss.item()}\ndiscriminator loss {d_loss.item()}')
             plt.figure(figsize=(8,6))
