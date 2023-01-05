@@ -7,7 +7,7 @@ import matplotlib.pyplot as plt
 
 from tqdm import tqdm
 import datetime
-now = datetime.datetime.now().strftime('%Y-%m-%d_%H:%M:%S')
+now = datetime.datetime.now().strftime('%Y-%m-%d_%H:%M:%S') 
 
 from utils.AE import AutoEncoder
 from utils.variant_GAN import Generator, Discriminator
@@ -93,14 +93,14 @@ beta = 15
 gamma = 0.1
 
 # Loss function
-gen_loss = GenFGANLoss(alpha_=alpha, beta_=beta)
-disc_loss = DiscFGANLoss(gamma_=gamma)
+gen_loss = GenFGANLoss(alpha_=alpha, beta_=beta) #generator loss function
+disc_loss = DiscFGANLoss(gamma_=gamma) #discriminator loss function
 
 # Initialize generator and discriminator
 generator = Generator().cuda()
 discriminator = Discriminator().cuda()
 
-optimizer_G = torch.optim.Adam(generator.parameters(), lr=5e-4)
+optimizer_G = torch.optim.Adam(generator.parameters(), lr=5e-4) #intial learning rates
 optimizer_D = torch.optim.Adam(discriminator.parameters(), lr=1e-4)
 
 n_epochs = 100
@@ -108,9 +108,10 @@ batch_size = 1000
 arr_d_loss, arr_g_loss, arr_i = [], [], []
 v_animate = 1
 
-hyperparametrs = (alpha, beta, gamma)
+hyperparametrs = (alpha, beta, gamma) #alpha-- hyperparameter used to generate data points on deltaX(boundary region), Beta: controlling disperion loss, Gamma: anamoly paramenters used to control discriminator
+#When gamma is less than 1, the discriminator will focus more on classifying the real data points correctly.
 
-data = model.encoder(Tensor(arr).reshape(-1, 3, 1)).reshape(-1, 1, 50, 6).detach()
+data = model.encoder(Tensor(arr).reshape(-1, 3, 1)).reshape(-1, 1, 50, 6).detach() #reshaping the array--> for architecture 50(fixed vector value for number of submitutions, eg:8--->50-8=42 zeropadding), 6 is latent domain subsitution
 n_batches = len(data) // batch_size
 training_data = data[:batch_size * n_batches].reshape((n_batches, batch_size, 1, 50, 6)).cuda()
 # test_data = training_data[round(n_batches*0.8)+1:]
