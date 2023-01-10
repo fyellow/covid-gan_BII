@@ -131,13 +131,13 @@ for i, epoch in enumerate((range(n_epochs))): #search abt this
             #  Train Discriminator
             # ---------------------
 
-            optimizer_D.zero_grad() #search abt this
+            optimizer_D.zero_grad() # restarts looping without losses
 
             # Measure discriminator's ability to classify real from generated samples
             d_loss = disc_loss(discriminator(real_data_batch), discriminator(fake_data_batch))
 
             d_loss.backward() #backprop
-            optimizer_D.step() #search abt this 
+            optimizer_D.step() #1 iteration of backprop then moves towards min loss
 
             # -----------------
             #  Train Generator
