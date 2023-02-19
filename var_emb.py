@@ -1,11 +1,11 @@
 import torch
-import torch.nn as nn
+import torch.nn as nn #nn contains different classess that help you build neural network models
 
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
 
-from tqdm import tqdm
+from tqdm import tqdm # python library that displays the progress bar
 import datetime
 now = datetime.datetime.now().strftime('%Y-%m-%d_%H:%M:%S') 
 
@@ -33,7 +33,7 @@ def load_numpy(arr_dir):
     :param arr_dir: path to existing binary file
     :return: numpy array
     """
-    with open(arr_dir, 'rb') as  f:
+    with open(arr_dir, 'rb') as  f: #opening non-text files
         data = np.load(f)
     return data
 
@@ -46,12 +46,12 @@ def save_numpy(arr, arr_dir):
     :return: none
     """
     with open(arr_dir, 'wb') as f:
-        np.save(f, arr)
+        np.save(f, arr) 
 
 def save_gan(model, ):
     pass
 
-model = AutoEncoder(protdim=2, locdim=2, aadim=2).cuda()
+model = AutoEncoder(protdim=2, locdim=2, aadim=2).cuda() 
 model.load_state_dict(torch.load('embedding_model_with_zeros.pt'))
 
 
@@ -61,7 +61,8 @@ def noise_data(n):
     :param n: number of samples to generate
     :return: random samples from multidimensional normal distribution
     """
-    return np.random.normal(0, 8, [n, 256])
+    return np.random.normal(0, 8, [n, 256])  #array of dimensions n,256 made from normal distribution of mean 0 and standard deviation of 8,
+#used to generate random weights for a neural network
 
 
 def pre_decode(var, prot_dec, aa_dec):
@@ -73,16 +74,16 @@ def pre_decode(var, prot_dec, aa_dec):
     :param aa_dec: inverted amino acid label encoding dictionary
     :return:
     """
-    var = var[arr[0].sum(axis=1) != 0] # exclude zero padding rows
+    var = var[arr[0].sum(axis=1) != 0] # exclude zero padding rows-- selects rows whose sum is not 0
     res = []
     for row in var:
-        res.append(prot_dec[row[0]] + '_' + str(int(row[1])) + aa_dec[row[2]])
+        res.append(prot_dec[row[0]] + '_' + str(int(row[1])) + aa_dec[row[2]]) #pro-name_loc_newaa
     return res
 
 
-arr_whole = load_numpy('data/variants_1.npy')
+arr_whole = load_numpy('data/variants_1.npy') #(50,6)
 metadata = pd.read_csv('data/variants_1_meta.csv')
-idx = int(1e5)
+idx = int(1e5) #100000
 arr = arr_whole[:idx]
 metadata = metadata[:idx]
 
@@ -112,7 +113,8 @@ hyperparametrs = (alpha, beta, gamma) #alpha-- hyperparameter used to generate d
 #When gamma is less than 1, the discriminator will focus more on classifying the real data points correctly.
 
 data = model.encoder(Tensor(arr).reshape(-1, 3, 1)).reshape(-1, 1, 50, 6).detach() #reshaping the array--> for architecture 50(fixed vector value for number of submitutions, eg:8--->50-8=42 zeropadding), 6 is latent domain subsitution
-#(prot_dim = loc_dim = aa_dim = 2.)--->2+2+2=6  Protien is represented by vector of dim 2 
+#(prot_dim = loc_dim = aa_dim = 2.)--->2+2+2=6  Protien is represented by vector of dim 2  #Fence GAN model expects input data in the form of 3-dimensional tensors #2nd reshape for discrimiantor
+#detach-prevents further gradient computations for this tensor.
 n_batches = len(data) // batch_size
 training_data = data[:batch_size * n_batches].reshape((n_batches, batch_size, 1, 50, 6)).cuda()
 # test_data = training_data[round(n_batches*0.8)+1:]
@@ -131,7 +133,7 @@ for i, epoch in enumerate((range(n_epochs))): #search abt this
             #  Train Discriminator
             # ---------------------
 
-            optimizer_D.zero_grad() # restarts looping without losses
+            optimizer_D.zero_grad() # restarts looping without losses  #The zero_grad() method is called on the optimizer_D to clear any previously stored gradients.
 
             # Measure discriminator's ability to classify real from generated samples
             d_loss = disc_loss(discriminator(real_data_batch), discriminator(fake_data_batch))
@@ -144,7 +146,7 @@ for i, epoch in enumerate((range(n_epochs))): #search abt this
             # -----------------
             for _ in range(2):
                 fake_data_batch = generator(Tensor(noise_data(batch_size)))
-                optimizer_G.zero_grad()
+                optimizer_G.zero_grad() 
 
                 # Loss measures generator's ability to fool the discriminator
                 g_loss = gen_loss(discriminator(fake_data_batch), fake_data_batch)
