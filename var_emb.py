@@ -144,17 +144,17 @@ for i, epoch in enumerate((range(n_epochs))): #search abt this
             # -----------------
             #  Train Generator
             # -----------------
-            for _ in range(2):
+            for _ in range(2): # trains twice
                 fake_data_batch = generator(Tensor(noise_data(batch_size)))
-                optimizer_G.zero_grad() 
+                optimizer_G.zero_grad() #set to 0 for each iteration
 
                 # Loss measures generator's ability to fool the discriminator
                 g_loss = gen_loss(discriminator(fake_data_batch), fake_data_batch)
 
-                g_loss.backward()
-                optimizer_G.step()
+                g_loss.backward() #backprop
+                optimizer_G.step() #updates the new parameters
 
-            arr_g_loss.append(g_loss.item())
+            arr_g_loss.append(g_loss.item()) #losses are added/included to respective arr
             arr_d_loss.append(d_loss.item())
 
 
@@ -162,12 +162,12 @@ for i, epoch in enumerate((range(n_epochs))): #search abt this
             #clear() # clear_output(wait=True)
             print(f'generator loss {g_loss.item()}\ndiscriminator loss {d_loss.item()}')
             plt.figure(figsize=(8,6))
-            plt.plot(np.arange(len(arr_g_loss))/n_batches, arr_g_loss, label='G')
+            plt.plot(np.arange(len(arr_g_loss))/n_batches, arr_g_loss, label='G') #x axix: epoch y: loss value
             plt.plot(np.arange(len(arr_g_loss))/n_batches, arr_d_loss, label='D')
             plt.title(f'Current epoch:{epoch+1}, batch:{j}/{n_batches}\nalpha={alpha},beta={beta},gamma={gamma}')
             plt.ylabel('losses')
             plt.xlabel('epoch')
-            plt.plot([0,len(arr_g_loss)/n_batches],[0.693,0.693],color='r',ls='--')
+            plt.plot([0,len(arr_g_loss)/n_batches],[0.693,0.693],color='r',ls='--') #max loss value for bce loss
             # plt.plot([0, len(arr_g_loss) / n_batches], [2,2], color='black', ls='--')
             plt.ylim(bottom=0)
             plt.legend()
