@@ -1,16 +1,17 @@
 import torch
-import torch.nn as nn
+import torch.nn as nn #nn-neural networks-helps to build has prebuilt layers
 
-Tensor = torch.FloatTensor
+Tensor = torch.FloatTensor #multi-dimensional matrix of single-precision floating-point numbers
 
 
 class BasicEncoding(nn.Module):
-    def __init__(self, ndim=5):
-        super(BasicEncoding, self).__init__()
+    def __init__(self, ndim=5): #5= number of dimensions output vector will have 
+        super(BasicEncoding, self).__init__() #built in function-temp obj of parent
         self.ndim = ndim
-        self.fc1 = nn.Linear(1, self.ndim)  
-        self.fc2 = nn.Linear(self.ndim, self.ndim)
-        self.activation = nn.LeakyReLU()
+        self.fc1 = nn.Linear(1, self.ndim)  # input scalar=1 , output-(batch_size,ndim)
+        self.fc2 = nn.Linear(self.ndim, self.ndim) 
+        
+        self.activation = nn.LeakyReLU() #to introduce non-linearity, prevents dying relu
 
     def forward(self, Input): #forward passing the data through layers
         x = self.activation(self.fc1(Input))
@@ -42,7 +43,7 @@ class BasicDecoding(nn.Module):
         self.fc1 = nn.Linear(self.indim, self.indim)
         self.fc2 = nn.Linear(self.indim, 1)
         self.rl = nn.LeakyReLU()
-        self.sm = nn.Softmax(dim=0)
+        self.sm = nn.Softmax(dim=0) #might be wrongly used--sigmoid better(binary classification)
 
     def forward(self, Input):
         x = self.fc2(self.rl(self.fc1(Input)))  # .round()
@@ -60,7 +61,7 @@ class SubstitutionEncoding(nn.Module):
         self.loc_encoder = BasicEncoding(ndim=self.locdim)
         self.aa_encoder = BasicEncoding(ndim=self.aadim)
 
-    def forward(self, Input):
+    def forward(self, Input): #size-(batch_size,3)
         prot_encoding = self.prot_encoder(Input[:, 0])
         loc_encoding = self.loc_encoder(Input[:, 1])
         aa_encoding = self.aa_encoder(Input[:, 2])
@@ -76,11 +77,11 @@ class SubstitutionDecoding(nn.Module):
         self.locdim = locdim
         self.aadim = aadim
 
-        self.prot_decoder = BasicDecoding(indim=self.protdim, outdim=24)
+        self.prot_decoder = BasicDecoding(indim=self.protdim, outdim=24) #24 protiens
         self.loc_decoder = BasicDecoding(indim=self.locdim, outdim=1)
-        self.aa_decoder = BasicDecoding(indim=self.aadim, outdim=20)
+        self.aa_decoder = BasicDecoding(indim=self.aadim, outdim=20) #20 amino acids
 
-    def forward(self, Input):
+    def forward(self, Input): #input split into 3 parts
         prot_prt = Input[:, :self.protdim]
         loc_prt = Input[:, self.protdim:self.locdim + self.protdim]
         aa_prt = Input[:, self.locdim + self.protdim:]
