@@ -12,7 +12,7 @@ class Generator(nn.Module): #noise i/p image o/p
         self.bn_fc = nn.BatchNorm2d(self.latent_dim) 
 
         self.convt_1 = nn.ConvTranspose2d(self.latent_dim, 128, (6, 2), stride=(1, 1))
-        self.bn_1 = nn.BatchNorm2d(128) #improves training process 
+        self.bn_1 = nn.BatchNorm2d(128) #improves training process- covariant shift---maynot be necessary cause our i/p is randnoise that is normalizised. 
 
         self.convt_2 = nn.ConvTranspose2d(128, 32, (6, 2), stride=(2, 1))
         #i/p-128, o/p:32 kernel size: (6,2) 
@@ -29,7 +29,7 @@ class Generator(nn.Module): #noise i/p image o/p
         self.LRe = nn.LeakyReLU(negative_slope=0.2) #(0.01 to 0.3)
 
     def forward(self, Input):
-        x = self.fc_1(Input).reshape(-1, self.latent_dim, 2, 2)
+        x = self.fc_1(Input).reshape(-1, self.latent_dim, 2, 2) #-1: divides dimensions of np array into 2x2 matrices  self.latentdim 
         x = self.LRe(self.bn_fc(x))
 
         x = self.convt_1(x)
