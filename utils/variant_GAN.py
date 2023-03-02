@@ -5,19 +5,22 @@ import torch.nn as nn
 class Generator(nn.Module): #noise i/p image o/p
     def __init__(self):
         super(Generator, self).__init__()
-        self.latent_dim = 256 #length of generator's latent space
+        self.latent_dim = 256 #length of generator's latent space--abritary? 
 
         self.fc_1 = nn.Linear(self.latent_dim, self.latent_dim * 2 * 2) # takes input noise vector-self.latnet_dim
+        #output tensor has enough dimensions to be reshaped into a 2D feature map that can be processed by the convolutional layers
         self.bn_fc = nn.BatchNorm2d(self.latent_dim) 
 
-        self.convt_1 = nn.ConvTranspose2d(self.latent_dim, 128, (6, 2), stride=(1, 1)) 
+        self.convt_1 = nn.ConvTranspose2d(self.latent_dim, 128, (6, 2), stride=(1, 1))
         self.bn_1 = nn.BatchNorm2d(128) #improves training process 
 
         self.convt_2 = nn.ConvTranspose2d(128, 32, (6, 2), stride=(2, 1))
+        #i/p-128, o/p:32 kernel size: (6,2) 
         self.bn_2 = nn.BatchNorm2d(32)
 
         self.convt_3 = nn.ConvTranspose2d(32, 16, (6, 2), stride=(1, 1))
         self.bn_3 = nn.BatchNorm2d(16)
+        #number of filters changes-help to reduce the number of parameters in the network and prevent overfitting.
 
         self.convt_4 = nn.ConvTranspose2d(16, 8, (3, 2), stride=(2, 1))#smaller strides: larger output feature map-higher spartail reso
         self.bn_4 = nn.BatchNorm2d(8)
