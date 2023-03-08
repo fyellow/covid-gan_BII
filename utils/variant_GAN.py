@@ -83,3 +83,49 @@ class Discriminator(nn.Module):
 
         x = self.activation(self.fc_1(torch.flatten(x, 1)))
         return (x)
+#with dropoutlayers
+    # class Generator(nn.Module):
+    #def __init__(self, latent_dim=256):
+     #   super(Generator, self).__init__()
+      #  self.latent_dim = latent_dim
+#
+ #       self.fc1 = nn.Linear(latent_dim, 1024)
+  #      self.fc2 = nn.Linear(1024, 50*6)
+
+   #     self.dropout = nn.Dropout(p=0.5)  # Add dropout layer
+
+    #def forward(self, z):
+     #   x = F.leaky_relu(self.fc1(z))
+      #  x = self.dropout(x)  # Add dropout layer
+       # x = self.fc2(x)
+        #return x.view(-1, 1, 50, 6)
+
+"""
+class Discriminator(nn.Module):
+    def __init__(self):
+        super(Discriminator, self).__init__()
+
+        self.conv1 = nn.Conv2d(1, 64, kernel_size=3, stride=1, padding=1)
+        self.conv2 = nn.Conv2d(64, 128, kernel_size=3, stride=2, padding=1)
+        self.conv3 = nn.Conv2d(128, 256, kernel_size=3, stride=1, padding=1)
+        self.conv4 = nn.Conv2d(256, 512, kernel_size=3, stride=2, padding=1)
+        self.conv5 = nn.Conv2d(512, 1024, kernel_size=3, stride=1, padding=1)
+        self.conv6 = nn.Conv2d(1024, 1, kernel_size=4, stride=1, padding=0)
+
+        self.dropout = nn.Dropout(p=0.5)  # Add dropout layer
+
+    def forward(self, x):
+        x = F.leaky_relu(self.conv1(x), negative_slope=0.1)
+        x = self.dropout(x)  # Add dropout layer
+        x = F.leaky_relu(self.conv2(x), negative_slope=0.1)
+        x = self.dropout(x)  # Add dropout layer
+        x = F.leaky_relu(self.conv3(x), negative_slope=0.1)
+        x = self.dropout(x)  # Add dropout layer
+        x = F.leaky_relu(self.conv4(x), negative_slope=0.1)
+        x = self.dropout(x)  # Add dropout layer
+        x = F.leaky_relu(self.conv5(x), negative_slope=0.1)
+        x = self.dropout(x)  # Add dropout layer
+        x = torch.sigmoid(self.conv6(x))
+
+        return x.view(-1, 1)
+"""
